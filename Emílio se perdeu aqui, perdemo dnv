@@ -134,3 +134,79 @@ if __name__ == "__main__":
         custom_stack.pop()
     except IndexError as e:
         print(e)  # Exibe a mensagem de erro
+
+#Question 3:
+
+''''
+    Para implementar uma árvore onde cada nó pode ter um número variável de filhos utilizando ponteiros, cada nó deve conter algumas informações fundamentais:
+1. Deve haver um valor que armazena o dado representado pelo nó. 
+2. É necessário um contador que indique quantos filhos o nó possui. 
+    Para gerenciar esses filhos, cada nó deve ter um ponteiro para um array dinâmico que contém ponteiros para os nós filhos.Essa estrutura 
+permite que o nó tenha um número variável de filhos, pois o array pode ser redimensionado conforme necessário.
+
+    Quando se deseja adicionar um novo filho a um nó, o primeiro passo é realocar o array de filhos. Como o número de filhos é variável, 
+ao adicionar um novo filho, é necessário aumentar o tamanho do array que contém os ponteiros para os filhos. Após aumentar o array, 
+um novo nó deve ser criado para o filho, preenchendo suas informações, como o valor e inicializando o número de filhos. 
+Em seguida, o ponteiro para o novo nó deve ser inserido na posição apropriada do array de filhos, e o contador de filhos do nó pai deve ser incrementado.
+
+    Para percorrer a árvore em largura (breadth-first), uma estrutura chamada fila pode ser utilizada. 
+    O primeiro passo é inicializar a fila para armazenar os nós que precisam ser visitados. Começa-se colocando o nó raiz na fila. 
+Enquanto a fila não estiver vazia, deve-se retirar um nó da fila, processar esse nó (por exemplo, imprimindo seu valor) e, em seguida, 
+adicionar todos os seus filhos à fila. 
+    Esse método garante que todos os nós em cada nível da árvore sejam visitados antes de passar para o próximo nível,
+proporcionando um percurso organizado da estrutura. Dessa forma, a árvore pode ser manipulada e percorrida eficientemente, 
+mesmo com a variação no número de filhos por nó.
+'''
+
+#Question 4:
+
+import numpy as np
+from scipy import stats
+
+def generate_points(n, distribution):
+    if distribution == 'uniform':
+        x = np.random.uniform(-1, 1, n)
+        y = np.random.uniform(-1, 1, n)
+    elif distribution == 'normal':
+        x = np.random.normal(0, 0.5, n)
+        y = np.random.normal(0, 0.5, n)
+    elif distribution == 'student_t':
+        x = np.random.standard_t(10, n) * 0.5  # Multiplicando para ajustar o desvio padrão
+        y = np.random.standard_t(10, n) * 0.5
+    else:
+        raise ValueError("Distribuição inválida. Escolha 'uniform', 'normal' ou 'student_t'.")
+
+    points = np.empty((n, 2))  # Cria um array vazio com n linhas e 2 colunas
+    points[:, 0] = x  # Atribui os valores de x
+    points[:, 1] = y  # Atribui os valores de y
+
+    return points
+
+
+''''
+Exemplo, caso queira:
+
+n = int(input("Digite o número de pontos a serem gerados: "))
+distribution = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
+
+points = generate_points(n, distribution)
+print("Pontos gerados:\n", points)
+'''
+
+#Question 5:
+
+from scipy.spatial import ConvexHull
+
+def calculate_convex_hull(points):
+    hull = ConvexHull(points)  # Calcula o fecho convexo
+    return points[hull.vertices]  # Retorna os pontos que pertencem ao fecho convexo
+
+# Supondo que a função generate_points e a entrada do usuário sejam usadas anteriormente
+n = int(input("Digite o número de pontos a serem gerados: "))
+distribution = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
+
+points = generate_points(n, distribution)
+print("Pontos gerados:\n", points)
+
+convex_hull_points = calculate_convex_hull(points)
+print("Pontos do fecho convexo:\n", convex_hull_points)
