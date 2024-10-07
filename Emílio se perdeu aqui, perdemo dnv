@@ -1,0 +1,136 @@
+#Question 1:
+class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def insert(root, val):
+    if root is None:
+        return TreeNode(val)
+    
+    if val == root.val:
+        raise ValueError("Valores duplicados não são permitidos na árvore.")
+    
+    if val < root.val:
+        root.left = insert(root.left, val)
+    else:
+        root.right = insert(root.right, val)
+
+    return root
+
+def isBalanced(root):
+    def check_balance_and_depth(node):
+        if node is None:
+            return 0, True  # Profundidade 0 e é balanceada
+
+        left_depth, left_balanced = check_balance_and_depth(node.left)
+        right_depth, right_balanced = check_balance_and_depth(node.right)
+
+        balanced = left_balanced and right_balanced
+
+        if balanced: #Vamos dizer que a árvore é balanceada se as produndidades diferem de, no máximo, 1.
+            if left_depth == right_depth:
+                return 1 + left_depth, True
+            if left_depth == right_depth + 1:
+                return 1 + left_depth, True
+            if left_depth + 1 == right_depth:
+                return 1 + right_depth, True
+            
+        #Caso contrário, a árvore não estará balanceada e retornaremos False.
+        return 0, False  
+
+    _, is_balanced = check_balance_and_depth(root)
+    return is_balanced
+
+# Exemplo de uso
+root = None
+values = [4, 2, 3, 5, 6] #Esta árvore está balanceada, por exemplo.
+
+for val in values:
+    root = insert(root, val)
+
+print(isBalanced(root))  # Saída: True (esta árvore é balanceada)
+
+# Tentativa de inserir um valor duplicado
+try:
+    root = insert(root, 10)  # Isso deve levantar um erro caso o valor de tentativa já esteja na árvore
+except ValueError as e: #Tentativa de colocar um valor que já está na árvore.
+    print(e)  # Exibe a mensagem de erro
+
+#Question 2:
+
+class CustomStack:
+    def __init__(self):
+        self.stack = []  # Vamos começar a construir a pilha
+        self.counter = 0  # Inicializa o contador para gerar índices aleatórios
+
+    def push(self, item):  # Aqui, colocaremos ítens na pilha
+        self.stack.append(item)
+
+    def pop(self):  # Aqui olhamos um elemento da pilha (obviamente não vazia), e retiramos ele da forma a seguir: 
+        if not self.stack:
+            raise IndexError("pop from an empty stack")
+
+        # Escolhe um índice aleatório manualmente
+        random_index = self._simple_random_index(len(self.stack))
+        item = self.stack[random_index]
+        
+        # Substitui o item removido pelo último item da pilha
+        self.stack[random_index] = self.stack[-1]
+        self.stack.pop()  # Remove o último item
+        return item
+
+    def peek(self):  # Aqui vamos dar uma olhada no topo pilha, ela deve ser claramente não vazia.
+        if not self.stack:
+            raise IndexError("peek from an empty stack")
+        return self.stack[-1]
+
+    def is_empty(self):  # Vamos verificar se a pilha está vazia.
+        return len(self.stack) == 0
+
+    def size(self):  # Vamos ver o tamanho da pilha
+        return len(self.stack)
+
+    def _simple_random_index(self, n):
+        """Gera um índice aleatório entre 0 e n-1 de forma simples."""
+        if n == 0:
+            return 0  # Evita divisão por zero, embora isso não deva ocorrer aqui
+        self.counter += 1  # Incrementa o contador a cada chamada
+        return (self.counter * 7) % n  # Gera um índice baseado no contador, vamos usar o 7, número primo, para que o resultado não siga uma sequência linear previsível.
+
+# Testes
+if __name__ == "__main__":
+    custom_stack = CustomStack()
+    
+    # Testando a operação push
+    print("Pushing items 1, 2, 3, 4, 5.")
+    for i in range(1, 6):
+        custom_stack.push(i)
+    
+    print("Current size of stack:", custom_stack.size())  # Saída: 5
+
+    # Testando a operação pop
+    print("Popping random item:", custom_stack.pop())
+    print("Current size of stack:", custom_stack.size())  # Saída: 4
+
+    print("Popping random item:", custom_stack.pop())
+    print("Current size of stack:", custom_stack.size())  # Saída: 3
+
+    print("Popping random item:", custom_stack.pop())
+    print("Current size of stack:", custom_stack.size())  # Saída: 2
+
+    # Testando peek
+    print("Top item (peek):", custom_stack.peek())  # Saída: (dependendo dos itens restantes)
+
+    # Testando is_empty
+    while not custom_stack.is_empty():
+        print("Popping item:", custom_stack.pop())
+    
+    print("Is stack empty?", custom_stack.is_empty())  # Saída: True
+
+    # Testando pop em pilha vazia
+    try:
+        custom_stack.pop()
+    except IndexError as e:
+        print(e)  # Exibe a mensagem de erro
