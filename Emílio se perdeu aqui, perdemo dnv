@@ -1,5 +1,61 @@
 #Question 1:
 
+class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def create_tree(nodes):
+    if not nodes:   # Se a lista estiver vazia, retorna None como árvore vazia
+        return None
+   
+    root = TreeNode(nodes[0]) # Vamos criar a raiz da árvore com o primeiro valor da lista
+   
+    def insert_node(root, value):
+        current_node = root
+        while current_node:
+            if value < current_node.val: # Se o valor é menor, vai para o filho esquerdo
+                if current_node.left is None:
+                    current_node.left = TreeNode(value)
+                    break  # Sai do loop após a inserção
+                current_node = current_node.left
+            elif value > current_node.val: #Se o valor é maior, vai para o filho direito
+                if current_node.right is None:
+                    current_node.right = TreeNode(value)
+                    break  # Sai do loop após a inserção
+                current_node = current_node.right
+            else: #Não queremos colocar um elemento que já está na árvore
+                raise ValueError('Elemento já consta na árvore') 
+                          
+        return root
+    # Iteraremos sobre os valores restantes da lista e insere na árvore
+    for n in nodes[1:]:
+        if insert_node(root, n) is None:
+            return None 
+   
+    return root
+ 
+
+def is_balanced(root):
+    # Função auxiliar para calcular a profundidade dos nó:
+    def check(node): #Se a árvore está balanceada, retornamos 0. Se não, retornamos -1
+        if node is None:
+            return 0
+        left_depth = check(node.left)
+        if left_depth == -1:
+            return -1
+        right_depth = check(node.right)
+        if right_depth == -1:
+            return -1
+        if abs(left_depth - right_depth) > 1:
+            return -1
+        return max(left_depth, right_depth)+1
+    return check(root) != -1
+
+#Use o exemplo abaixo, caso queira:
+
+#print(is_balanced(create_tree([4,1, 2,3,0,5,4.5,6,7])))
 
 #Question 2:
 
