@@ -1,64 +1,9 @@
 #Question 1:
-class TreeNode:
-    def __init__(self, val=0):
-        self.val = val
-        self.left = None
-        self.right = None
 
-def insert(root, val):
-    if root is None:
-        return TreeNode(val)
-    
-    if val == root.val:
-        raise ValueError("Valores duplicados não são permitidos na árvore.")
-    
-    if val < root.val:
-        root.left = insert(root.left, val)
-    else:
-        root.right = insert(root.right, val)
-
-    return root
-
-def isBalanced(root):
-    def check_balance_and_depth(node):
-        if node is None:
-            return 0, True  # Profundidade 0 e é balanceada
-
-        left_depth, left_balanced = check_balance_and_depth(node.left)
-        right_depth, right_balanced = check_balance_and_depth(node.right)
-
-        balanced = left_balanced and right_balanced
-
-        if balanced: #Vamos dizer que a árvore é balanceada se as produndidades diferem de, no máximo, 1.
-            if left_depth == right_depth:
-                return 1 + left_depth, True
-            if left_depth == right_depth + 1:
-                return 1 + left_depth, True
-            if left_depth + 1 == right_depth:
-                return 1 + right_depth, True
-            
-        #Caso contrário, a árvore não estará balanceada e retornaremos False.
-        return 0, False  
-
-    _, is_balanced = check_balance_and_depth(root)
-    return is_balanced
-
-# Exemplo de uso
-root = None
-values = [4, 2, 3, 5, 6] #Esta árvore está balanceada, por exemplo.
-
-for val in values:
-    root = insert(root, val)
-
-print(isBalanced(root))  # Saída: True (esta árvore é balanceada)
-
-# Tentativa de inserir um valor duplicado
-try:
-    root = insert(root, 10)  # Isso deve levantar um erro caso o valor de tentativa já esteja na árvore
-except ValueError as e: #Tentativa de colocar um valor que já está na árvore.
-    print(e)  # Exibe a mensagem de erro
 
 #Question 2:
+
+import random
 
 class CustomStack:
     def __init__(self):
@@ -69,37 +14,21 @@ class CustomStack:
         self.stack.append(item)
 
     def pop(self):  # Aqui olhamos um elemento da pilha (obviamente não vazia), e retiramos ele da forma a seguir: 
-        if not self.stack:
-            raise IndexError("pop from an empty stack")
+        if len(self.stack) == 0:
+            raise IndexError("pop para uma pilha vazia")
 
-        # Escolhe um índice aleatório manualmente
-        random_index = self._simple_random_index(len(self.stack))
+        # Vamos escolher um índice aleatório:
+        random_index = random.randint(0, len(self.stack) - 1)
         item = self.stack[random_index]
         
         # Substitui o item removido pelo último item da pilha
         self.stack[random_index] = self.stack[-1]
         self.stack.pop()  # Remove o último item
         return item
+    
+''''
+Use o teste abaixo, caso queira:
 
-    def peek(self):  # Aqui vamos dar uma olhada no topo pilha, ela deve ser claramente não vazia.
-        if not self.stack:
-            raise IndexError("peek from an empty stack")
-        return self.stack[-1]
-
-    def is_empty(self):  # Vamos verificar se a pilha está vazia.
-        return len(self.stack) == 0
-
-    def size(self):  # Vamos ver o tamanho da pilha
-        return len(self.stack)
-
-    def _simple_random_index(self, n):
-        """Gera um índice aleatório entre 0 e n-1 de forma simples."""
-        if n == 0:
-            return 0  # Evita divisão por zero, embora isso não deva ocorrer aqui
-        self.counter += 1  # Incrementa o contador a cada chamada
-        return (self.counter * 7) % n  # Gera um índice baseado no contador, vamos usar o 7, número primo, para que o resultado não siga uma sequência linear previsível.
-
-# Testes
 if __name__ == "__main__":
     custom_stack = CustomStack()
     
@@ -107,33 +36,15 @@ if __name__ == "__main__":
     print("Pushing items 1, 2, 3, 4, 5.")
     for i in range(1, 6):
         custom_stack.push(i)
+
+    # Testando a operação pop:
+    print("Popping random item:", custom_stack.pop())
+    print("Popping random item:", custom_stack.pop())
+    print("Popping random item:", custom_stack.pop())
+    print("Popping random item:", custom_stack.pop())
+    print("Popping random item:", custom_stack.pop())
+'''
     
-    print("Current size of stack:", custom_stack.size())  # Saída: 5
-
-    # Testando a operação pop
-    print("Popping random item:", custom_stack.pop())
-    print("Current size of stack:", custom_stack.size())  # Saída: 4
-
-    print("Popping random item:", custom_stack.pop())
-    print("Current size of stack:", custom_stack.size())  # Saída: 3
-
-    print("Popping random item:", custom_stack.pop())
-    print("Current size of stack:", custom_stack.size())  # Saída: 2
-
-    # Testando peek
-    print("Top item (peek):", custom_stack.peek())  # Saída: (dependendo dos itens restantes)
-
-    # Testando is_empty
-    while not custom_stack.is_empty():
-        print("Popping item:", custom_stack.pop())
-    
-    print("Is stack empty?", custom_stack.is_empty())  # Saída: True
-
-    # Testando pop em pilha vazia
-    try:
-        custom_stack.pop()
-    except IndexError as e:
-        print(e)  # Exibe a mensagem de erro
 
 #Question 3:
 
@@ -163,16 +74,33 @@ mesmo com a variação no número de filhos por nó.
 import numpy as np
 from scipy import stats
 
-def generate_points(n, distribution):
-    if distribution == 'uniform':
-        x = np.random.uniform(-1, 1, n)
-        y = np.random.uniform(-1, 1, n)
-    elif distribution == 'normal':
-        x = np.random.normal(0, 0.5, n)
-        y = np.random.normal(0, 0.5, n)
-    elif distribution == 'student_t':
-        x = np.random.standard_t(10, n) * 0.5  # Multiplicando para ajustar o desvio padrão
-        y = np.random.standard_t(10, n) * 0.5
+def generate_points(n, distribution1, distribution2):
+
+    #Vamos escolher a distribuição para o eixo x:
+
+    if distribution1 == 'uniform':
+        # Gerar amostras de uma distribuição uniforme
+        x = stats.uniform.rvs(-1, 2, n)  # intervalo [-1, 1]
+     
+    elif distribution1 == 'normal':
+        # Gerar amostras de uma distribuição normal
+        x = stats.norm.rvs(0, 0.5, n)  # média 0, desvio padrão 0.5
+       
+    elif distribution1 == 'student_t':
+        # Gerar amostras de uma distribuição t de Student com ajuste de desvio padrão
+        x = stats.t.rvs(n - 1, n) * 0.5  # vamos escolher o grau de liberdade n-1 
+   
+    else:
+        raise ValueError("Distribuição inválida. Escolha 'uniform', 'normal' ou 'student_t'.")
+    
+    #Vamos escolher a distribuição para o eixo y:
+
+    if distribution2 == 'uniform':
+        y = stats.uniform.rvs(-1, 2, n) # intervalo [-1, 1]
+    elif distribution2 == 'normal':
+        y = stats.norm.rvs(0, 0.5, n) # média 0, desvio padrão 0.5
+    elif distribution2 == 'student_t':
+        y = stats.t.rvs(n - 1, n) * 0.5  # graus de liberdade n-1
     else:
         raise ValueError("Distribuição inválida. Escolha 'uniform', 'normal' ou 'student_t'.")
 
@@ -182,16 +110,17 @@ def generate_points(n, distribution):
 
     return points
 
-
 ''''
 Exemplo, caso queira:
 
 n = int(input("Digite o número de pontos a serem gerados: "))
-distribution = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
+distribution1 = input("Escolha a distribuição (uniform, normal, student_t) para o eixo x: ").strip().lower()
+distribution2 = input("Escolha a distribuição (uniform, normal, student_t) para o eixo y: ").strip().lower()
 
-points = generate_points(n, distribution)
-print("Pontos gerados:\n", points)
+points = generate_points(n, distribution1, distribution2)
+print("Pontos gerados: ", points)
 '''
+
 
 #Question 5:
 
@@ -201,12 +130,17 @@ def calculate_convex_hull(points):
     hull = ConvexHull(points)  # Calcula o fecho convexo
     return points[hull.vertices]  # Retorna os pontos que pertencem ao fecho convexo
 
-# Supondo que a função generate_points e a entrada do usuário sejam usadas anteriormente
+# Supondo que a função generate_points e a entrada do usuário sejam usadas anteriormente:
 n = int(input("Digite o número de pontos a serem gerados: "))
-distribution = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
+distribution1 = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
+distribution2 = input("Escolha a distribuição (uniform, normal, student_t): ").strip().lower()
 
-points = generate_points(n, distribution)
+''''
+Use, caso queira:
+
+points = generate_points(n, distribution1, distribution2)
 print("Pontos gerados:\n", points)
 
 convex_hull_points = calculate_convex_hull(points)
 print("Pontos do fecho convexo:\n", convex_hull_points)
+'''
